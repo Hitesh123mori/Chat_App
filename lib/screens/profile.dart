@@ -172,9 +172,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18), // Adjust the values to increase the size
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                         if(_formkey.currentState!.validate()){
                           _formkey.currentState!.save() ;
+                          await Api.updateProfilePicture(File(_image!)) ;
                           Api.updateUserInfo().then((value) {
                             Dialogs.showSnackbar(context, "Profile Updated") ;
                           }) ;
@@ -239,6 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   setState(() {
                                     _image = image.path;
                                   });
+
                                 }
 
                               },
@@ -266,6 +268,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   setState(() {
                                     _image = image.path;
                                   });
+
                                 }
 
                               },

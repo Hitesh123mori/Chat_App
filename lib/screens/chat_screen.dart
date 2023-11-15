@@ -6,6 +6,7 @@ import 'package:chatapp/main.dart';
 import 'package:chatapp/models/chat_user.dart';
 import 'package:chatapp/models/messages.dart';
 import 'package:chatapp/screens/home_screen.dart';
+import 'package:chatapp/screens/view_profile.dart';
 import 'package:chatapp/theme/colors.dart';
 import 'package:chatapp/widgets/message_card.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -165,7 +166,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget buildAppbar() {
     return InkWell(
         onTap: () {
+          Navigator.push(context, SizeTransition4(ViewProfile( user: widget.user,))) ;
         },
+
         child: StreamBuilder(
             stream: Api.getUserInfo(widget.user),
             builder: (context, snapshot) {
