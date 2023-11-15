@@ -1,4 +1,3 @@
-
 import 'package:chatapp/apis/Apis.dart';
 import 'package:chatapp/effects/transition5.dart';
 import 'package:chatapp/helper/my_date.dart';
@@ -47,13 +46,15 @@ class _UserCardState extends State<UserCard> {
       elevation: 0.5,
       child: InkWell(
         onTap: () {
-          Navigator.push(context, SizeTransition5(ChatScreen(user: widget.user)));
+          Navigator.push(
+              context, SizeTransition5(ChatScreen(user: widget.user)));
         },
         child: StreamBuilder(
           stream: Api.getLastMessages(widget.user),
           builder: (context, snapshot) {
             final data = snapshot.data?.docs;
-            final list = data?.map((e) => Messages.fromJson(e.data())).toList() ?? [];
+            final list =
+                data?.map((e) => Messages.fromJson(e.data())).toList() ?? [];
             if (list.isNotEmpty) {
               _message = list[0];
             }
@@ -68,48 +69,62 @@ class _UserCardState extends State<UserCard> {
               ),
               subtitle: _message != null
                   ? Row(
-                children: [
-                  _message!.type == Type.text ?
-                  Text(
-                    _message!.msg.length <= mq.width*0.01
-                        ? _message!.msg
-                        : _message!.msg.substring(0, 19) + '...', // Display ellipsis for long messages
-                    style: TextStyle(fontSize: 16, color: AppColors.theme['secondaryTextColor']),
-                  ) : Row(
                       children: [
-                        Icon(Icons.image,color: AppColors.theme['secondaryTextColor'],),
-                        SizedBox(width: 7,),
-                        Text("Image",style: TextStyle(color:AppColors.theme['secondaryTextColor'] ),),
-
-                      ]
-                  )
-                  ,
-                ],
-              )
+                        _message!.type == Type.text
+                            ? Text(
+                                _message!.msg.length <= 19
+                                    ? _message!.msg
+                                    : _message!.msg.substring(0, 19) + '...',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color:
+                                        AppColors.theme['secondaryTextColor']),
+                              )
+                            : Row(
+                                children: [
+                                  Icon(Icons.image,
+                                      color: AppColors
+                                          .theme['secondaryTextColor']),
+                                  SizedBox(
+                                    width: 7,
+                                  ),
+                                  Text("Image",
+                                      style: TextStyle(
+                                          color: AppColors
+                                              .theme['secondaryTextColor'])),
+                                ],
+                              ),
+                      ],
+                    )
                   : Text(
-                "Say Hii! 👋",
-                style: TextStyle(fontSize: 16, color: AppColors.theme['secondaryTextColor']),
-              ),
-
+                      "Say Hii! 👋",
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.theme['secondaryTextColor']),
+                    ),
               trailing: _message == null
                   ? null
                   : _message!.read.isEmpty && _message!.fromId != Api.user.uid
-                  ? Container(
-                height: 20,
-                width: 20,
-                child: Center(
-                  child: Text(unreadCount.toString(), style: TextStyle(color: Colors.white),
-                  ),
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.theme['appbarColor'],
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              )
-                  : Text(
-                MyDateUtil.getLastMessageTime(context: context, time: _message!.sent),
-                style: TextStyle(color: AppColors.theme['secondaryTextColor']),
-              ),
+                      ? Container(
+                          height: 20,
+                          width: 20,
+                          child: Center(
+                            child: Text(
+                              unreadCount.toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.theme['appbarColor'],
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        )
+                      : Text(
+                          MyDateUtil.getLastMessageTime(
+                              context: context, time: _message!.sent),
+                          style: TextStyle(
+                              color: AppColors.theme['secondaryTextColor']),
+                        ),
             );
           },
         ),
