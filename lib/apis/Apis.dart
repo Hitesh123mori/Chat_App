@@ -43,6 +43,9 @@ class Api {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
+
+
+
   static Future<bool> addChatUser(String email) async {
     final data = await firestore
         .collection('users')
@@ -71,6 +74,8 @@ class Api {
     }
   }
 
+
+
   // for getting current user info
   static Future<void> getSelfInfo() async {
     await firestore.collection('users').doc(user.uid).get().then((user) async {
@@ -81,6 +86,8 @@ class Api {
       }
     });
   }
+
+
 
   // for creating a new user
   static Future<void> createUser() async {
@@ -103,6 +110,8 @@ class Api {
         .set(chatUser.toJson());
   }
 
+
+
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
 
 
@@ -111,6 +120,8 @@ class Api {
         .where('id', isNotEqualTo: user.uid)
         .snapshots();
   }
+
+
 
   static Future<void> updateUserInfo() async {
     await firestore.collection('users').doc(user.uid).update({
@@ -126,6 +137,14 @@ class Api {
         .collection('users')
         .where('id', isEqualTo: chatUser.id)
         .snapshots();
+  }
+
+  static  Future<void> updateActiveStatus(bool isOnline)async{
+    firestore.collection('users').doc(user.uid).update(
+      {
+        'is_online' : isOnline,
+        'last_active' : DateTime.now().millisecondsSinceEpoch.toString(),
+      }) ;
   }
 
 

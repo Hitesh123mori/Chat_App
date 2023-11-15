@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatapp/apis/Apis.dart';
 import 'package:chatapp/effects/transition4.dart';
 import 'package:chatapp/helper/my_date.dart';
@@ -160,51 +161,76 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+
   Widget buildAppbar() {
     return InkWell(
-      onTap: () {},
-      child: Row(
-        children: [
-          BackButton(
-            color: Colors.white,
-            onPressed: () {
-              Navigator.push(context, SizeTransition4(HomeScreen()));
-            },
-          ),
-          SizedBox(width: 5),
-          CircleAvatar(
-            backgroundColor: Colors.white30,
-            backgroundImage: NetworkImage(widget.user.image),
-          ),
-          SizedBox(width: 10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.user.name,
-                style: TextStyle(
-                  color: AppColors.theme['primaryTextColor'],
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              Text(
-                widget.user.lastActive == DateTime.now().millisecondsSinceEpoch
-                    ? "Online"
-                    : MyDateUtil.getLastActiveTime(
-                    context: context, lastActive: widget.user.lastActive),
-                style: TextStyle(
-                  color: AppColors.theme['secondaryTextColor'],
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+        onTap: () {
+        },
+        child: StreamBuilder(
+            stream: Api.getUserInfo(widget.user),
+            builder: (context, snapshot) {
+              final data = snapshot.data?.docs;
+              final list =
+                  data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [] ;
+              return Row(
+                children: [
+                  //back button
+                  IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon:
+                       Icon(Icons.arrow_back, color:AppColors.theme['primaryTextColor'])),
+
+                  //user profile picture
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(mq.height * .03),
+                    child: CachedNetworkImage(
+                      width: mq.height * .05,
+                      height: mq.height * .05,
+                      imageUrl:
+                      list.isNotEmpty ? list[0].image : widget.user.image,
+                      errorWidget: (context, url, error) => const CircleAvatar(
+                          child: Icon(CupertinoIcons.person)),
+                    ),
+                  ),
+
+                  //for adding some space
+                  const SizedBox(width: 10),
+
+                  //user name & last seen time
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //user name
+                      Text(list.isNotEmpty ? list[0].name : widget.user.name,
+                          style:  TextStyle(
+                              fontSize: 16,
+                              color: AppColors.theme['primaryTextColor'],
+                              fontWeight: FontWeight.w500)),
+
+                      //for adding some space
+                      const SizedBox(height: 2),
+
+                      //last seen time of user
+                      Text(
+                          list.isNotEmpty
+                              ? list[0].isOnline
+                              ? 'Online'
+                              : MyDateUtil.getLastActiveTime(
+                              context: context,
+                              lastActive: list[0].lastActive)
+                              : MyDateUtil.getLastActiveTime(
+                              context: context,
+                              lastActive: widget.user.lastActive),
+                          style:  TextStyle(
+                              fontSize: 13, color: AppColors.theme['primaryTextColor'])),
+                    ],
+                  )
+                ],
+              );
+            }));
   }
+
 
   Widget buildChatInput() {
     return Padding(
@@ -279,7 +305,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (!_isMessageTextFieldFocused)
                     IconButton(
                       onPressed: () async{
-                        final ImagePicker picker  =ImagePicker() ;
+                        final ImagePicker picker  = ImagePicker() ;
 
                         final XFile ?image =  await picker.pickImage(source:ImageSource.camera,imageQuality: 100) ;
                         if(image!=null){

@@ -7,6 +7,7 @@ import 'package:chatapp/theme/colors.dart';
 import 'package:chatapp/widgets/user_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -28,6 +29,22 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState(){
     super.initState();
     Api.getSelfInfo();
+
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      print('Message: $message');
+
+      if (Api.auth.currentUser != null) {
+        if (message.toString().contains('resume')) {
+          Api.updateActiveStatus(true);
+        }
+        if (message.toString().contains('pause')) {
+          Api.updateActiveStatus(false);
+        }
+      }
+
+      return Future.value(message);
+    });
+
   }
   Widget build(BuildContext context) {
     return GestureDetector(

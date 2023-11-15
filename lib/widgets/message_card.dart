@@ -55,34 +55,39 @@ class _MessageCardState extends State<MessageCard> {
                   style: TextStyle(color:AppColors.theme['primaryTextColor'],fontSize: 16),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: mq.width*0.54,top: 3,bottom: 10),
+                  padding: EdgeInsets.only(left: mq.width*0.49,top: 3,bottom: 10,right: mq.width*0.03),
                   child: Text(MyDateUtil.getFormattedTime(context: context,time:widget.messages.sent),style: TextStyle(color: AppColors.theme['secondaryTextColor'],fontSize: 13),),
                 ),
               ],
             ) :Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.messages.msg,
-                    placeholder: (context, url) =>Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Center(child:  Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(color: AppColors.theme['primaryTextColor'],),
-                          SizedBox(width: 10,),
-                          Text("Loading Image",style: TextStyle(color: AppColors.theme['primaryTextColor']),)
-                        ],
-                      )),
+                Center(
+                  child: Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 13.0,vertical: 13.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.messages.msg,
+                        placeholder: (context, url) =>Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(child:  Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(color: AppColors.theme['primaryTextColor'],),
+                              SizedBox(width: 10,),
+                              Text("Loading Image",style: TextStyle(color: AppColors.theme['primaryTextColor']),)
+                            ],
+                          )),
+                        ),
+                        errorWidget: (context, url, error) =>
+                        const Icon(Icons.image, size: 70),
+                      ),
                     ),
-                    errorWidget: (context, url, error) =>
-                    const Icon(Icons.image, size: 70),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: mq.width*0.54,top: 3,bottom: 10),
+                  padding: EdgeInsets.only(left: mq.width*0.49,top: 3,bottom: 10,right: mq.width*0.03),
                   child: Text(MyDateUtil.getFormattedTime(context: context,time:widget.messages.sent),style: TextStyle(color: AppColors.theme['secondaryTextColor'],fontSize: 13),),
                 ),
               ],
@@ -180,25 +185,28 @@ class _MessageCardState extends State<MessageCard> {
          )  :Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.messages.msg,
-                    placeholder: (context, url) =>  Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Center(child:  Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(color: AppColors.theme['primaryTextColor'],),
-                            SizedBox(width: 10,),
-                            Text("Loading Image",style: TextStyle(color: AppColors.theme['primaryTextColor']),)
-                          ],
-                        ),
-                      )),
+                Padding(
+                  padding:  EdgeInsets.symmetric(horizontal: 10.0,vertical: 10),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.messages.msg,
+                      placeholder: (context, url) =>  Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Center(child:  Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(color: AppColors.theme['primaryTextColor'],),
+                              SizedBox(width: 10,),
+                              Text("Loading Image",style: TextStyle(color: AppColors.theme['primaryTextColor']),)
+                            ],
+                          ),
+                        )),
+                      ),
+                      errorWidget: (context, url, error) =>
+                      const Icon(Icons.image, size: 70),
                     ),
-                    errorWidget: (context, url, error) =>
-                    const Icon(Icons.image, size: 70),
                   ),
                 ),
                 Row(
