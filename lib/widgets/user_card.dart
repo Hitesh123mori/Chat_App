@@ -18,7 +18,7 @@ class UserCard extends StatefulWidget {
 
 class _UserCardState extends State<UserCard> {
   Messages? _message;
-  int? unreadCount;
+  int? unreadCount  ;
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _UserCardState extends State<UserCard> {
         unreadCount = count;
       });
     }).catchError((error) {
-      // Handle error if needed
+
     });
   }
 

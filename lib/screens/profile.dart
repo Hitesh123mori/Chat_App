@@ -50,6 +50,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Navigator.pop(context);
                 Navigator.pushReplacement(context,SizeTransition4(LoginScreen())) ;
                 Dialogs.showSnackbar(context, "Logout Successfully done") ;
+              }).then((value)async{
+                 await Api.updateActiveStatus(false) ;
               });
             }) ;
 
