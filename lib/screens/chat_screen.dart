@@ -28,6 +28,8 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isMessageTextFieldFocused = false;
   final _textController = TextEditingController();
   bool _showEmoji = false;
+  bool _isUploading = false ;
+
 
   List<Messages> _list = []; // Store messages here
 
@@ -82,6 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           if (_list.isNotEmpty) {
                             return ListView.builder(
                               // controller: _scrollController,
+                              reverse:  true ,
                               itemCount: _list.length,
                               physics: BouncingScrollPhysics(),
                               itemBuilder: (context, index) {
@@ -110,6 +113,31 @@ class _ChatScreenState extends State<ChatScreen> {
                     },
                   ),
                 ),
+                if(_isUploading)
+                  Center(child: Padding(
+                    padding:  EdgeInsets.only(left: mq.width*0.23),
+                    child: Container(
+                       decoration: BoxDecoration(
+                         color: AppColors.theme['appbarColor'],
+                         borderRadius: BorderRadius.circular(20).copyWith(
+                           topRight: Radius.circular(0),
+
+                         )
+                       ),
+                        width: mq.width*0.7,
+                        height: mq.height*0.18,
+
+                        child: Center(child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+
+                            CircularProgressIndicator(color: AppColors.theme['primaryTextColor'],),
+                            SizedBox(width: 10,),
+                            Text("Uploading Image",style: TextStyle(color: AppColors.theme['primaryTextColor']),)
+                          ],
+                        ))
+                    ),
+                  )) ,
                 buildChatInput(),
                 if (_showEmoji)
                   SizedBox(
@@ -256,8 +284,13 @@ class _ChatScreenState extends State<ChatScreen> {
                         final XFile ?image =  await picker.pickImage(source:ImageSource.camera,imageQuality: 100) ;
                         if(image!=null){
                           print("Image path : ${image.path}") ;
-
+                          setState(() {
+                            _isUploading = true ;
+                          });
                           await Api.sendChatImage(widget.user, File(image.path)) ;
+                          setState(() {
+                            _isUploading = false ;
+                          });
                         }
 
                       },
@@ -270,10 +303,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     IconButton(
                       onPressed: () async {
                         final ImagePicker picker = ImagePicker();
-                        final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-                        if(image!=null){
-                          print("path : " + image.name + "   Mime type : ${image.mimeType}") ;
-                          await Api.sendChatImage(widget.user, File(image.path)) ;
+                        final List<XFile> image = await picker.pickMultiImage();
+                        for(var i in image){
+                          setState(() {
+                            _isUploading = true ;
+                          });
+                            print("path : " + i.name + "   Mime type : ${i.mimeType}") ;
+                            await Api.sendChatImage(widget.user, File(i.path)) ;
+                            setState(() {
+                              _isUploading = false ;
+                            });
                         }
                       },
                       icon: Icon(

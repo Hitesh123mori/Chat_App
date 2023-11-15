@@ -62,7 +62,18 @@ class _MessageCardState extends State<MessageCard> {
             ) :Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.network(widget.messages.msg),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.messages.msg,
+                    placeholder: (context, url) => const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    errorWidget: (context, url, error) =>
+                    const Icon(Icons.image, size: 70),
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.only(left: mq.width*0.54,top: 3,bottom: 10),
                   child: Text(MyDateUtil.getFormattedTime(context: context,time:widget.messages.sent),style: TextStyle(color: AppColors.theme['secondaryTextColor'],fontSize: 13),),
@@ -108,10 +119,13 @@ class _MessageCardState extends State<MessageCard> {
             child: widget.messages.type == Type.text ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.messages.msg,
-                  style: TextStyle(
-                      color: AppColors.theme['primaryTextColor'], fontSize: 16),
+                Padding(
+                  padding: const EdgeInsets.only(left:10.0,right: 10),
+                  child: Text(
+                    widget.messages.msg,
+                    style: TextStyle(
+                        color: AppColors.theme['primaryTextColor'], fontSize: 16),
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -128,7 +142,7 @@ class _MessageCardState extends State<MessageCard> {
                     ),
                     if (widget.messages.read.isNotEmpty)
                       Padding(
-                        padding: EdgeInsets.only(right: 10.0),
+                        padding: EdgeInsets.only(right: mq.width*0.05),
                         child: Icon(
                           Icons.done_all,
                           size: 21,
@@ -137,7 +151,7 @@ class _MessageCardState extends State<MessageCard> {
                       )
                     else if (isOnline ==true && widget.messages.read.isEmpty)
                       Padding(
-                        padding: EdgeInsets.only(right: 10.0),
+                        padding: EdgeInsets.only(right: mq.width*0.05),
                         child: Icon(
                           Icons.done_all,
                           size: 21,
@@ -146,7 +160,7 @@ class _MessageCardState extends State<MessageCard> {
                       )
                     else
                       Padding(
-                        padding: EdgeInsets.only(right: 10.0),
+                        padding: EdgeInsets.only(right: mq.width*0.05),
                         child: Icon(
                           Icons.done,
                           size: 21,
@@ -159,9 +173,24 @@ class _MessageCardState extends State<MessageCard> {
          )  :Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Image.network(widget.messages.msg,),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.messages.msg,
+                    placeholder: (context, url) =>  Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(child:  Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(color: AppColors.theme['primaryTextColor'],),
+                          SizedBox(width: 10,),
+                          Text("Loading Image",style: TextStyle(color: AppColors.theme['primaryTextColor']),)
+                        ],
+                      )),
+                    ),
+                    errorWidget: (context, url, error) =>
+                    const Icon(Icons.image, size: 70),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: mq.width*0.54,top: 3,bottom: 10),

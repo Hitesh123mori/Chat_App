@@ -78,7 +78,7 @@ class _UserCardState extends State<UserCard> {
                   ) : Row(
                       children: [
                         Icon(Icons.image,color: AppColors.theme['secondaryTextColor'],),
-                        SizedBox(width: 10,),
+                        SizedBox(width: 7,),
                         Text("Image",style: TextStyle(color:AppColors.theme['secondaryTextColor'] ),),
 
                       ]
