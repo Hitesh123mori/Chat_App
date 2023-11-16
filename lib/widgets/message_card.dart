@@ -5,6 +5,7 @@ import 'package:chatapp/main.dart';
 import 'package:chatapp/models/chat_user.dart';
 import 'package:chatapp/models/messages.dart';
 import 'package:chatapp/theme/colors.dart';
+import 'package:chatapp/widgets/view_message_details_card.dart';
 import 'package:flutter/material.dart' ;
 
 
@@ -24,7 +25,14 @@ class _MessageCardState extends State<MessageCard> {
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size ;
-    return Api.user.uid == widget.messages.fromId ?  _SentMessage() : _ReceiveMessage() ;
+    bool isMe = Api.user.uid == widget.messages.fromId ;
+    return InkWell(
+      onLongPress: (){
+        _showModelSheet();
+      },
+      child: isMe ? _SentMessage() : _ReceiveMessage(),
+
+    ) ;
   }
 
   Widget _ReceiveMessage(){
@@ -258,6 +266,69 @@ class _MessageCardState extends State<MessageCard> {
 
       ],
     );
+  }
+
+  Future _showModelSheet(){
+    return showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: AppColors.theme['backgroundColor'],
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                SizedBox(height: 20,),
+                Center(child: Text("Message Details",style: TextStyle(fontSize: 18,color: AppColors.theme['primaryTextColor'],fontWeight: FontWeight.w400),)),
+                SizedBox(height: 20,),
+                widget.messages.type == Type.text  ?
+                MessageDetailCard(text: 'Copy Text', icon: Icon(Icons.copy,color: AppColors.theme['primaryTextColor'],), ontap: () {  },) :
+                MessageDetailCard(text: 'Save image', icon: Icon(Icons.download,color: AppColors.theme['primaryTextColor'],), ontap: () {  },),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  child: Divider(height: 30,thickness:2,),
+                ),
+                if(widget.messages.type==Type.text && Api.user.uid == widget.messages.fromId)
+                    MessageDetailCard(text: 'Edit Text', icon: Icon(Icons.edit,color: AppColors.theme['primaryTextColor'],), ontap: () {  },),
+                if(widget.messages.type==Type.text && Api.user.uid == widget.messages.fromId)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Divider(height: 30,thickness: 2,),
+                    ),
+
+
+                Row(
+                  children: [
+                    MessageDetailCard(text: 'Read Time : ', icon: Icon(Icons.done_all,color: Colors.blue), ontap: () {  },),
+                    Text(widget.messages.read.isNotEmpty ? MyDateUtil.getMessageTime(context: context, time: widget.messages.read) : "Haven't seen it yet",style: TextStyle(fontSize: 18,color:AppColors.theme['secondaryTextColor'],fontWeight: FontWeight.w400),),
+                  ],
+                ),
+                Row(
+                  children: [
+                    MessageDetailCard(text: 'Sent Time : ', icon: Icon(Icons.done_all,color: AppColors.theme['secondaryTextColor']), ontap: () {  },),
+                    Text(MyDateUtil.getMessageTime(context: context, time: widget.messages.sent),style: TextStyle(fontSize: 18,color:AppColors.theme['secondaryTextColor'],fontWeight: FontWeight.w400),),
+                  ],
+                ),
+
+
+              ],
+
+            ),
+          ) ;
+
+
+
+        }
+
+    ) ;
   }
 
 }
