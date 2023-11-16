@@ -15,19 +15,22 @@ class MessageDetailCard extends StatelessWidget {
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size ;
 
-    return Container(
-      child: Padding(
+    return InkWell(
+      onTap: ontap,
+      child: Container(
+        child: Padding(
 
-        padding: EdgeInsets.only(left: mq.width*0.1,top: mq.height*0.02,bottom: mq.height*0.02),
-        child: Row(
-          children: [
-            icon,
-            SizedBox(width: 20,),
-            Text(text,style: TextStyle(fontSize: 18,color: AppColors.theme['primaryTextColor'],fontWeight: FontWeight.w400),),
-          ],
+          padding: EdgeInsets.only(left: mq.width*0.1,top: mq.height*0.02,bottom: mq.height*0.02),
+          child: Row(
+            children: [
+              icon,
+              SizedBox(width: 20,),
+              Text(text,style: TextStyle(fontSize: 18,color: AppColors.theme['primaryTextColor'],fontWeight: FontWeight.w400),),
+            ],
+          ),
         ),
-      ),
 
+      ),
     );
   }
 }

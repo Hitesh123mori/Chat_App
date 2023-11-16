@@ -7,6 +7,9 @@ import 'package:chatapp/models/messages.dart';
 import 'package:chatapp/theme/colors.dart';
 import 'package:chatapp/widgets/view_message_details_card.dart';
 import 'package:flutter/material.dart' ;
+import 'package:flutter/services.dart';
+
+import '../helper/dialogs.dart';
 
 
 
@@ -72,13 +75,13 @@ class _MessageCardState extends State<MessageCard> {
               children: [
                 Center(
                   child: Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: 13.0,vertical: 13.0),
+                    padding:  EdgeInsets.symmetric(horizontal: 5.0,vertical: 4.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: CachedNetworkImage(
                         imageUrl: widget.messages.msg,
                         placeholder: (context, url) =>Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(2.0),
                           child: Center(child:  Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -194,13 +197,13 @@ class _MessageCardState extends State<MessageCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 10.0,vertical: 10),
+                  padding:  EdgeInsets.symmetric(horizontal: 5.0,vertical: 4),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: CachedNetworkImage(
                       imageUrl: widget.messages.msg,
                       placeholder: (context, url) =>  Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(2.0),
                         child: Center(child:  Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -268,6 +271,8 @@ class _MessageCardState extends State<MessageCard> {
     );
   }
 
+
+
   Future _showModelSheet(){
     return showModalBottomSheet(
         context: context,
@@ -284,25 +289,40 @@ class _MessageCardState extends State<MessageCard> {
               color: AppColors.theme['backgroundColor'],
             ),
             child: ListView(
+              physics: BouncingScrollPhysics(),
               shrinkWrap: true,
               children: [
                 SizedBox(height: 20,),
                 Center(child: Text("Message Details",style: TextStyle(fontSize: 18,color: AppColors.theme['primaryTextColor'],fontWeight: FontWeight.w400),)),
                 SizedBox(height: 20,),
                 widget.messages.type == Type.text  ?
-                MessageDetailCard(text: 'Copy Text', icon: Icon(Icons.copy,color: AppColors.theme['primaryTextColor'],), ontap: () {  },) :
-                MessageDetailCard(text: 'Save image', icon: Icon(Icons.download,color: AppColors.theme['primaryTextColor'],), ontap: () {  },),
+                MessageDetailCard(text: 'Copy Message', icon: Icon(Icons.copy,color: Colors.blue), ontap: () async{
+                  await Clipboard.setData(
+                    ClipboardData(text: widget.messages.msg)
+                  ).then((value) {
+                    Navigator.pop(context);
+                    Dialogs.showSnackbar(context, "Message Copied!");
+                  });
+                },) :
+                MessageDetailCard(text: 'Save image', icon: Icon(Icons.download,color:Colors.blue), ontap: () {  },),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Divider(height: 30,thickness:2,),
                 ),
                 if(widget.messages.type==Type.text && Api.user.uid == widget.messages.fromId)
-                    MessageDetailCard(text: 'Edit Text', icon: Icon(Icons.edit,color: AppColors.theme['primaryTextColor'],), ontap: () {  },),
+                    MessageDetailCard(text: 'Edit Message', icon: Icon(Icons.edit,color: Colors.green), ontap: () {   },),
+                if(Api.user.uid == widget.messages.fromId )
+                  MessageDetailCard(text: 'Delete Message', icon: Icon(Icons.delete,color: Colors.red), ontap: () {  },),
+                if(widget.messages.type==Type.image && Api.user.uid == widget.messages.fromId )
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Divider(height: 30,thickness: 2,),
+                  ),
                 if(widget.messages.type==Type.text && Api.user.uid == widget.messages.fromId)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Divider(height: 30,thickness: 2,),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Divider(height: 30,thickness: 2,),
+                  ),
 
 
                 Row(
@@ -317,7 +337,6 @@ class _MessageCardState extends State<MessageCard> {
                     Text(MyDateUtil.getMessageTime(context: context, time: widget.messages.sent),style: TextStyle(fontSize: 18,color:AppColors.theme['secondaryTextColor'],fontWeight: FontWeight.w400),),
                   ],
                 ),
-
 
               ],
 
