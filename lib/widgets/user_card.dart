@@ -4,7 +4,9 @@ import 'package:chatapp/helper/my_date.dart';
 import 'package:chatapp/models/chat_user.dart';
 import 'package:chatapp/models/messages.dart';
 import 'package:chatapp/screens/chat_screen.dart';
+import 'package:chatapp/screens/profile.dart';
 import 'package:chatapp/theme/colors.dart';
+import 'package:chatapp/widgets/view_profile_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -59,9 +61,18 @@ class _UserCardState extends State<UserCard> {
               _message = list[0];
             }
             return ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Colors.white30,
-                backgroundImage: NetworkImage(widget.user.image),
+              leading: InkWell(
+                onTap: (){
+                  showDialog(context: context, builder: (_){
+
+                   return ProfileDialog(user: widget.user,) ;
+
+                  }) ;
+                },
+                child: CircleAvatar(
+                  backgroundColor: Colors.white30,
+                  backgroundImage: NetworkImage(widget.user.image),
+                ),
               ),
               title: Text(
                 widget.user.name,
