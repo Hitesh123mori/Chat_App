@@ -51,11 +51,11 @@ class _ViewProfileState extends State<ViewProfile> {
             SizedBox(height: mq.height*0.001,),
 
             Padding(
-              padding:  EdgeInsets.symmetric(horizontal: mq.width*0.28,vertical: 18),
+              padding:  EdgeInsets.symmetric(horizontal: mq.width*0.2,vertical: 18),
               child: Row(
                 children: [
                   Text("Joined On ",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color:Colors.green),),
-                  Text(MyDateUtil.getLastMessageTime(context: context, time: widget.user.createdAt),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: AppColors.theme['primaryTextColor']),),
+                  Text(MyDateUtil.getLastMessageTime(context: context, time: widget.user.createdAt,showYear: true),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: AppColors.theme['primaryTextColor']),),
                 ],
               ),
             ),
