@@ -44,14 +44,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: AppColors.theme['appbarColor'],
           onPressed: () async {
             Dialogs.showProgressBar(context);
+            await Api.updateActiveStatus(false) ;
             await Api.auth.signOut().then((value) async {
               await GoogleSignIn().signOut().then((value){
                 Navigator.pop(context);
                 Navigator.pop(context);
                 Navigator.pushReplacement(context,SizeTransition4(LoginScreen())) ;
                 Dialogs.showSnackbar(context, "Logout Successfully done") ;
-              }).then((value)async{
-                 await Api.updateActiveStatus(false) ;
               });
             }) ;
 

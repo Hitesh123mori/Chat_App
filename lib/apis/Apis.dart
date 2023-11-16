@@ -140,6 +140,7 @@ class Api {
   }
 
   static  Future<void> updateActiveStatus(bool isOnline)async{
+    print("status updated") ;
     firestore.collection('users').doc(user.uid).update(
       {
         'is_online' : isOnline,

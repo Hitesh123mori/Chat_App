@@ -21,7 +21,7 @@ class _ViewProfileState extends State<ViewProfile> {
     return  Scaffold(
         backgroundColor: AppColors.theme['backgroundColor'],
         appBar: AppBar(
-          title: Text("Profile"),
+          title: Text("${widget.user.name}'s Profile"),
         ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
