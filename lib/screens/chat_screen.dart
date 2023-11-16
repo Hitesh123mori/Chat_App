@@ -117,27 +117,27 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 if(_isUploading)
                   Center(child: Padding(
-                    padding:  EdgeInsets.only(left: mq.width*0.23),
-                    child: Container(
-                       decoration: BoxDecoration(
-                         color: AppColors.theme['appbarColor'],
-                         borderRadius: BorderRadius.circular(20).copyWith(
-                           topRight: Radius.circular(0),
+                    padding:  EdgeInsets.only(left: mq.width*0.03,right:mq.width*0.03 ,bottom: mq.height*0.008),
+                    child: Material(
+                      elevation:4,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                         decoration: BoxDecoration(
+                           color: AppColors.theme['backgroundColor'],
+                           borderRadius: BorderRadius.circular(20)
+                         ),
+                          width: mq.width*1,
+                          height: mq.height*0.07,
 
-                         )
-                       ),
-                        width: mq.width*0.7,
-                        height: mq.height*0.18,
-
-                        child: Center(child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-
-                            CircularProgressIndicator(color: AppColors.theme['primaryTextColor'],),
-                            SizedBox(width: 10,),
-                            Text("Uploading Image",style: TextStyle(color: AppColors.theme['primaryTextColor']),)
-                          ],
-                        ))
+                          child: Center(child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(color: AppColors.theme['primaryTextColor'],),
+                              SizedBox(width: 10,),
+                              Text("Uploading Image",style: TextStyle(color: AppColors.theme['primaryTextColor']),)
+                            ],
+                          ))
+                      ),
                     ),
                   )) ,
                 buildChatInput(),
