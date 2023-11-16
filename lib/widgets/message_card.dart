@@ -312,7 +312,14 @@ class _MessageCardState extends State<MessageCard> {
                 if(widget.messages.type==Type.text && Api.user.uid == widget.messages.fromId)
                     MessageDetailCard(text: 'Edit Message', icon: Icon(Icons.edit,color: Colors.green), ontap: () {   },),
                 if(Api.user.uid == widget.messages.fromId )
-                  MessageDetailCard(text: 'Delete Message', icon: Icon(Icons.delete,color: Colors.red), ontap: () {  },),
+                  MessageDetailCard(text: 'Delete Message', icon: Icon(Icons.delete,color: Colors.red), ontap: () async{
+
+                    await Api.deleteMessage(widget.messages).then((value){
+                      Navigator.pop(context);
+                      Dialogs.showSnackbar(context, "Message Deleted") ;
+                    }) ;
+
+                  },),
                 if(widget.messages.type==Type.image && Api.user.uid == widget.messages.fromId )
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),

@@ -20,7 +20,11 @@ class Api {
   // for accessing firebase storage
   static FirebaseStorage storage = FirebaseStorage.instance;
 
+  // for notification
  static FirebaseMessaging  fmessaging = FirebaseMessaging.instance ;
+
+  // to return current user
+  static User get user => auth.currentUser!;
 
 
 
@@ -39,10 +43,9 @@ class Api {
 
   );
 
-  // to return current user
-  static User get user => auth.currentUser!;
 
 
+// for get push token
   static Future<void> getFirebaseMessagingToken() async {
     await fmessaging.requestPermission();
 
@@ -52,7 +55,7 @@ class Api {
         log('Push Token: $t');
       }
     });
-
+// foreground notificaion
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       log('Got a message whilst in the foreground!');
       log('Message data: ${message.data}');
@@ -63,14 +66,13 @@ class Api {
     });
   }
 
-
+// check user existance
   static Future<bool> userExists() async {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
 
-
-
+  // adding chat user
   static Future<bool> addChatUser(String email) async {
     final data = await firestore
         .collection('users')
@@ -101,6 +103,8 @@ class Api {
 
 
 
+
+
   // for getting current user info
   static Future<void> getSelfInfo() async {
     await firestore.collection('users').doc(user.uid).get().then((user) async {
@@ -112,6 +116,9 @@ class Api {
       }
     });
   }
+
+
+  // for pushing notification
   static Future<void> sendPushNotification(
       ChatUser chatUser, String msg) async {
     try {
@@ -142,6 +149,7 @@ class Api {
   }
 
 
+
   // for creating a new user
   static Future<void> createUser() async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
@@ -164,6 +172,8 @@ class Api {
         .set(chatUser.toJson());
   }
 
+  // get all users for displaying it into home screen
+
 
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
@@ -177,12 +187,16 @@ class Api {
 
 
 
+
+  // update user self information
   static Future<void> updateUserInfo() async {
     await firestore.collection('users').doc(user.uid).update({
       'name': me.name,
       'about': me.about,
     });
   }
+
+  // get user information
 
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
@@ -192,6 +206,8 @@ class Api {
         .where('id', isEqualTo: chatUser.id)
         .snapshots();
   }
+
+  // user online/offiline  feature
 
   static  Future<void> updateActiveStatus(bool isOnline)async{
     print("status updated") ;
@@ -203,6 +219,8 @@ class Api {
       }) ;
   }
 
+
+  // updating current user profile picture
 
   static Future<void> updateProfilePicture(File file) async {
     //getting image file extension
@@ -231,7 +249,6 @@ class Api {
 
   ///************** Chat Screen Related APIs **************
 
-  // chats (collection) --> conversation_id (doc) --> messages (collection) --> message (doc)
 
   // useful for getting conversation id
   static String getConversationID(String id) => user.uid.hashCode <= id.hashCode
@@ -249,6 +266,8 @@ class Api {
         .snapshots();
 
   }
+
+
 
   // for sending message
   static Future<void> sendMessage(
@@ -276,11 +295,15 @@ class Api {
   }
 
 
+  // if messsage read them update read time
+
   static Future<void> updateMessageReadStatus(Messages messages) async{
     firestore.collection("chats/${getConversationID(messages.fromId)}/messages/").doc(messages.sent).update({'read': DateTime.now().millisecondsSinceEpoch.toString() }) ;
   }
 
 
+
+  // get last message for displaying it in home screen
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessages(
       ChatUser user) {
@@ -293,6 +316,8 @@ class Api {
   }
 
 
+  // count unread message for displaying it in home screen
+
   static Future<int> countUnreadMessages(ChatUser chatUser) async {
     final conversationID = getConversationID(chatUser.id);
 
@@ -303,6 +328,8 @@ class Api {
 
     return messages.docs.length;
   }
+
+  // sending image and store it into firebase storage
 
 
   static Future<void> sendChatImage(ChatUser chatUser,File file)async{
@@ -321,6 +348,21 @@ class Api {
 
 
   }
+
+
+  // for delete message from char
+
+ static Future<void> deleteMessage(Messages message)async{
+
+    await firestore.collection('chats/${getConversationID(message.toId)}/messages/').doc(message.sent).delete() ;
+
+    if(message.type == Type.image){
+      await storage.refFromURL(message.msg).delete() ;
+    }
+
+ }
+
+
 
 
 }
