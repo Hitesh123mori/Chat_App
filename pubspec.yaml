@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^2.17.0
   http: ^1.1.0
+  flutter_notification_channel: ^2.0.0
   cached_network_image: ^3.3.0
   firebase_messaging: ^14.7.4
   firebase_auth: ^4.10.1

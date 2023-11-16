@@ -4,6 +4,9 @@ import 'package:chatapp/theme/colors.dart';
 import 'package:flutter/material.dart' ;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_notification_channel/flutter_notification_channel.dart';
+import 'package:flutter_notification_channel/notification_importance.dart';
+import 'package:flutter_notification_channel/notification_visibility.dart';
 
 late Size mq ;
 
@@ -52,6 +55,20 @@ _intializeFirebase() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  var result = await FlutterNotificationChannel.registerNotificationChannel(
+    description: 'show chat messages',
+    id: 'Chats',
+    importance: NotificationImportance.IMPORTANCE_HIGH,
+    name: 'Chats',
+    visibility: NotificationVisibility.VISIBILITY_PUBLIC,
+    allowBubbles: true,
+    enableVibration: true,
+    enableSound: true,
+    showBadge: true,
+  );
+  print(result);
+
 }
 
 

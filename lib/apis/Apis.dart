@@ -52,6 +52,15 @@ class Api {
         log('Push Token: $t');
       }
     });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      log('Got a message whilst in the foreground!');
+      log('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        log('Message also contained a notification: ${message.notification}');
+      }
+    });
   }
 
 
@@ -111,7 +120,10 @@ class Api {
         "notification": {
           "title": me.name,
           "body": msg,
-          "android_channel_id": "chats"
+          "android_channel_id": "Chats",
+        },
+        "data": {
+          "some_data" : "user id : ${me.id}",
         },
       };
 
