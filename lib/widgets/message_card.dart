@@ -5,13 +5,15 @@ import 'package:chatapp/main.dart';
 import 'package:chatapp/models/chat_user.dart';
 import 'package:chatapp/models/messages.dart';
 import 'package:chatapp/theme/colors.dart';
+import 'package:chatapp/widgets/update_message_dialog.dart';
 import 'package:chatapp/widgets/view_message_details_card.dart';
 import 'package:flutter/material.dart' ;
 import 'package:flutter/services.dart';
-
 import '../helper/dialogs.dart';
-
-
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:flutter/rendering.dart';
+import 'dart:typed_data';
+import 'package:dio/dio.dart';
 
 class MessageCard extends StatefulWidget {
   const MessageCard({super.key, required this.messages, required this.user});
@@ -271,8 +273,6 @@ class _MessageCardState extends State<MessageCard> {
     );
   }
 
-
-
   Future _showModelSheet(){
     return showModalBottomSheet(
         context: context,
@@ -304,13 +304,39 @@ class _MessageCardState extends State<MessageCard> {
                     Dialogs.showSnackbar(context, "Message Copied!");
                   });
                 },) :
-                MessageDetailCard(text: 'Save image', icon: Icon(Icons.download,color:Colors.blue), ontap: () {  },),
+                MessageDetailCard(text: 'Save image', icon: Icon(Icons.download,color:Colors.blue), ontap: () async {
+                  try{
+                    // var response = await Dio().get(
+                    //     widget.messages.msg,
+                    //     options: Options(responseType: ResponseType.bytes));
+                    // final result = await ImageGallerySaver.saveImage(
+                    //     Uint8List.fromList(response.data),
+                    //     quality: 60,
+                    //     name: "hello");
+                    // print(result);
+
+                  }catch(e){
+                    print("Error while saving image :  ${e}") ;
+                  }
+
+
+                },),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Divider(height: 30,thickness:2,),
                 ),
                 if(widget.messages.type==Type.text && Api.user.uid == widget.messages.fromId)
-                    MessageDetailCard(text: 'Edit Message', icon: Icon(Icons.edit,color: Colors.green), ontap: () {   },),
+                    MessageDetailCard(text: 'Edit Message', icon: Icon(Icons.edit,color: Colors.green), ontap: () {
+
+                      Navigator.pop(context) ;
+
+                      showDialog(context: context, builder: (_){
+
+                        return UpdateMessage(message : widget.messages) ;
+
+                      }) ;
+
+                    },),
                 if(Api.user.uid == widget.messages.fromId )
                   MessageDetailCard(text: 'Delete Message', icon: Icon(Icons.delete,color: Colors.red), ontap: () async{
 

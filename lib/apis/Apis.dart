@@ -9,7 +9,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart';
 import '../models/chat_user.dart';
 
-
 class Api {
   // for authentication
   static FirebaseAuth auth = FirebaseAuth.instance;
@@ -21,29 +20,23 @@ class Api {
   static FirebaseStorage storage = FirebaseStorage.instance;
 
   // for notification
- static FirebaseMessaging  fmessaging = FirebaseMessaging.instance ;
+  static FirebaseMessaging fmessaging = FirebaseMessaging.instance;
 
   // to return current user
   static User get user => auth.currentUser!;
 
-
-
-
   // for storing self information
   static ChatUser me = ChatUser(
-      id: user.uid,
-      name: user.displayName.toString(),
-      email: user.email.toString(),
-      about: "Hey, I'm using We Chat!",
-      image: user.photoURL.toString(),
-      createdAt: '',
-      isOnline: false,
-      lastActive: '',
-       pushToken : '',
-
+    id: user.uid,
+    name: user.displayName.toString(),
+    email: user.email.toString(),
+    about: "Hey, I'm using We Chat!",
+    image: user.photoURL.toString(),
+    createdAt: '',
+    isOnline: false,
+    lastActive: '',
+    pushToken: '',
   );
-
-
 
 // for get push token
   static Future<void> getFirebaseMessagingToken() async {
@@ -71,8 +64,7 @@ class Api {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
-
-  // adding chat user
+  // adding selected chat user
   static Future<bool> addChatUser(String email) async {
     final data = await firestore
         .collection('users')
@@ -95,15 +87,19 @@ class Api {
 
       return true;
     } else {
-      //user doesn't exists
 
       return false;
     }
   }
 
-
-
-
+  // selecteed chat user
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUsersId() {
+    return firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('my_users')
+        .snapshots();
+  }
 
   // for getting current user info
   static Future<void> getSelfInfo() async {
@@ -117,7 +113,6 @@ class Api {
     });
   }
 
-
   // for pushing notification
   static Future<void> sendPushNotification(
       ChatUser chatUser, String msg) async {
@@ -130,7 +125,7 @@ class Api {
           "android_channel_id": "Chats",
         },
         "data": {
-          "some_data" : "user id : ${me.id}",
+          "some_data": "user id : ${me.id}",
         },
       };
 
@@ -138,7 +133,7 @@ class Api {
           headers: {
             HttpHeaders.contentTypeHeader: 'application/json',
             HttpHeaders.authorizationHeader:
-            'key=AAAA-pgxvbI:APA91bHY45r9UrdF9GTa9X47ebaNyOR4HLoFsCO-z8Fxs182jB6nRmg-b3QTlZ9cNZnMV75h63Y_ULtDEnXpRiL8IJaCLl5LyRVNt-lG2W35yfBVGK4o3uLg9LJzdXsOsC1hqts2eyB4'
+                'key=AAAA-pgxvbI:APA91bHY45r9UrdF9GTa9X47ebaNyOR4HLoFsCO-z8Fxs182jB6nRmg-b3QTlZ9cNZnMV75h63Y_ULtDEnXpRiL8IJaCLl5LyRVNt-lG2W35yfBVGK4o3uLg9LJzdXsOsC1hqts2eyB4'
           },
           body: jsonEncode(body));
       log('Response status: ${res.statusCode}');
@@ -148,21 +143,19 @@ class Api {
     }
   }
 
-
-
   // for creating a new user
   static Future<void> createUser() async {
     final time = DateTime.now().millisecondsSinceEpoch.toString();
 
     final chatUser = ChatUser(
-        id: user.uid,
-        name: user.displayName.toString(),
-        email: user.email.toString(),
-        about: "Hey, I'm using We Chat!",
-        image: user.photoURL.toString(),
-        createdAt: time,
-        isOnline: false,
-        lastActive: time,
+      id: user.uid,
+      name: user.displayName.toString(),
+      email: user.email.toString(),
+      about: "Hey, I'm using chatWith",
+      image: user.photoURL.toString(),
+      createdAt: time,
+      isOnline: false,
+      lastActive: time,
       pushToken: '',
     );
 
@@ -174,19 +167,12 @@ class Api {
 
   // get all users for displaying it into home screen
 
-
-
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
-
-
     return firestore
         .collection('users')
         .where('id', isNotEqualTo: user.uid)
         .snapshots();
   }
-
-
-
 
   // update user self information
   static Future<void> updateUserInfo() async {
@@ -198,7 +184,6 @@ class Api {
 
   // get user information
 
-
   static Stream<QuerySnapshot<Map<String, dynamic>>> getUserInfo(
       ChatUser chatUser) {
     return firestore
@@ -209,16 +194,14 @@ class Api {
 
   // user online/offiline  feature
 
-  static  Future<void> updateActiveStatus(bool isOnline)async{
-    print("status updated") ;
-    firestore.collection('users').doc(user.uid).update(
-      {
-        'is_online' : isOnline,
-        'last_active' : DateTime.now().millisecondsSinceEpoch.toString(),
-        'push_token' : me.pushToken ,
-      }) ;
+  static Future<void> updateActiveStatus(bool isOnline) async {
+    print("status updated");
+    firestore.collection('users').doc(user.uid).update({
+      'is_online': isOnline,
+      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
+      'push_token': me.pushToken,
+    });
   }
-
 
   // updating current user profile picture
 
@@ -245,10 +228,7 @@ class Api {
         .update({'image': me.image});
   }
 
-
-
   ///************** Chat Screen Related APIs **************
-
 
   // useful for getting conversation id
   static String getConversationID(String id) => user.uid.hashCode <= id.hashCode
@@ -258,20 +238,16 @@ class Api {
   // for getting all messages of a specific conversation from firestore database
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
       ChatUser user) {
-
-    print(getConversationID(user.id)) ;
+    print(getConversationID(user.id));
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages/')
-        .orderBy('sent',descending: true)
+        .orderBy('sent', descending: true)
         .snapshots();
-
   }
-
-
 
   // for sending message
   static Future<void> sendMessage(
-      ChatUser chatUser, String msg,Type type) async {
+      ChatUser chatUser, String msg, Type type) async {
     //message sending time (also used as id)
     print("#CreateChat");
     final time = DateTime.now().millisecondsSinceEpoch.toString();
@@ -281,27 +257,30 @@ class Api {
         toId: chatUser.id,
         msg: msg,
         read: '',
-        type:type,
+        type: type,
         fromId: user.uid,
-        sent: time
-    );
+        sent: time);
     final messageJson = message.toJson();
-    print(messageJson) ;
-   print("id  : ${getConversationID(chatUser.id)}") ;
-    await firestore.collection("chats/${getConversationID(chatUser.id)}/messages/").doc("$time").set(messageJson).then((value) =>sendPushNotification(chatUser,type == Type.text ? msg : "image"));
-
+    print(messageJson);
+    print("id  : ${getConversationID(chatUser.id)}");
+    await firestore
+        .collection("chats/${getConversationID(chatUser.id)}/messages/")
+        .doc("$time")
+        .set(messageJson)
+        .then((value) =>
+            sendPushNotification(chatUser, type == Type.text ? msg : "image"));
 
     print("#ChatAdded");
   }
 
-
   // if messsage read them update read time
 
-  static Future<void> updateMessageReadStatus(Messages messages) async{
-    firestore.collection("chats/${getConversationID(messages.fromId)}/messages/").doc(messages.sent).update({'read': DateTime.now().millisecondsSinceEpoch.toString() }) ;
+  static Future<void> updateMessageReadStatus(Messages messages) async {
+    firestore
+        .collection("chats/${getConversationID(messages.fromId)}/messages/")
+        .doc(messages.sent)
+        .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
   }
-
-
 
   // get last message for displaying it in home screen
 
@@ -309,12 +288,10 @@ class Api {
       ChatUser user) {
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages/')
-        .orderBy('sent',descending: true)
+        .orderBy('sent', descending: true)
         .limit(1)
         .snapshots();
-
   }
-
 
   // count unread message for displaying it in home screen
 
@@ -331,38 +308,40 @@ class Api {
 
   // sending image and store it into firebase storage
 
+  static Future<void> sendChatImage(ChatUser chatUser, File file) async {
+    final ext = file.path.split('.').last;
+    final ref = storage.ref().child(
+        'images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext');
 
-  static Future<void> sendChatImage(ChatUser chatUser,File file)async{
-    final ext  = file.path.split('.').last ;
-    final ref = storage.ref().child('images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext') ;
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((po) {
+      print("Data send}");
+    });
 
-    await ref.putFile(file,SettableMetadata(contentType: 'image/$ext')).then((po){
-      print("Data send}") ;
-    }) ;
-
-
-    final imageUrl = await ref.getDownloadURL() ;
-    await Api.sendMessage(chatUser, imageUrl, Type.image) ;
-
-
-
-
+    final imageUrl = await ref.getDownloadURL();
+    await Api.sendMessage(chatUser, imageUrl, Type.image);
   }
-
 
   // for delete message from char
 
- static Future<void> deleteMessage(Messages message)async{
+  static Future<void> deleteMessage(Messages message) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages/')
+        .doc(message.sent)
+        .delete();
 
-    await firestore.collection('chats/${getConversationID(message.toId)}/messages/').doc(message.sent).delete() ;
-
-    if(message.type == Type.image){
-      await storage.refFromURL(message.msg).delete() ;
+    if (message.type == Type.image) {
+      await storage.refFromURL(message.msg).delete();
     }
+  }
 
- }
+  // for updateting message
 
-
-
-
+  static Future<void> updateMessage(Messages message,String updatedMessage) async {
+    await firestore
+        .collection('chats/${getConversationID(message.toId)}/messages/')
+        .doc(message.sent)
+        .update({"msg":updatedMessage});
+  }
 }
