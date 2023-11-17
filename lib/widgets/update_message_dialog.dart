@@ -15,8 +15,6 @@ class UpdateMessage extends StatefulWidget {
 class _UpdateMessageState extends State<UpdateMessage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-
-
   @override
   Widget build(BuildContext context) {
     mq = MediaQuery.of(context).size;
